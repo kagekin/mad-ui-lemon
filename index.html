@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>最高のエナジードリンク！ キレートレモンぶち生み出しボタン！</title>
+    
+    <!-- OGP (Open Graph Protocol) Tags for Social Sharing -->
+    <meta property="og:title" content="最高のエナジードリンク！ キレートレモンぶち生み出しボタン！">
+    <meta property="og:description" content="究極のカオスとマッドネス！あなただけのキレートレモンを創生せよ！ #キレートレモンボタン">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="https://pbs.twimg.com/profile_images/1905651963158835200/M06q-esr_400x400.jpg">
+    <meta property="og:site_name" content="キレートレモン創生装置">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="最高のエナジードリンク！ キレートレモンぶち生み出しボタン！">
+    <meta name="twitter:description" content="究極のカオスとマッドネス！あなただけのキレートレモンを創生せよ！">
+    <meta name="twitter:image" content="https://pbs.twimg.com/profile_images/1905651963158835200/M06q-esr_400x400.jpg">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Kiwi+Maru:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root { --vh: 100vh; }
+        html, body { overscroll-behavior: none; }
+        body {
+            font-family: 'DotGothic16', sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow: hidden;
+            cursor: crosshair;
+            height: var(--vh);
+        }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: var(--vh); z-index: 10; }
+        .center-flex { display: flex; justify-content: center; align-items: center; }
+        .text-overlay {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(1.5rem, 5vw, 2.5rem); text-align: center; color: #fef08a;
+            text-shadow: 0 0 10px #fef08a, 0 0 20px #ff0000;
+            z-index: 50; opacity: 0; font-family: 'Kiwi Maru', serif; white-space: nowrap;
+        }
+        .emoji { position: absolute; user-select: none; pointer-events: none; }
+        #start-button {
+            border: 5px solid #ff00ff;
+            box-shadow: 0 0 15px #ff00ff, 0 0 25px #ff00ff, inset 0 0 10px #ff00ff;
+            animation: pulse-border 1.5s infinite;
+        }
+        @keyframes pulse-border { 50% { box-shadow: 0 0 25px #00ffff, 0 0 40px #00ffff, inset 0 0 15px #00ffff; } }
+        .rainbow-text {
+            background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            animation: rainbow-flow 2s linear infinite; background-size: 400% auto;
+        }
+        @keyframes rainbow-flow { to { background-position: 400% center; } }
+        #disclaimer { animation: rainbow-flow 2s linear infinite, disclaimer-pulse 2s ease-in-out infinite; }
+        @keyframes disclaimer-pulse { 50% { transform: scale(1.05); } }
+        .speech-bubble { position: relative; background: #1f2937; border-radius: .4em; border: 2px solid #4b5563; }
+        .speech-bubble:after {
+            content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border: 20px solid transparent;
+            border-bottom-color: #1f2937;
+        }
+        .lemon-scroll-container {
+            position: absolute; width: 100%; height: 100%; overflow: hidden;
+            top: 0; left: 0; pointer-events: none; z-index: 0; /* 後ろに表示 */
+        }
+        .lemon-track {
+            position: absolute; display: flex; font-size: 2rem;
+            white-space: nowrap; animation: scroll-lemons 20s linear infinite;
+        }
+        @keyframes scroll-lemons {
+            from { transform: translateX(0%); }
+            to { transform: translateX(-50%); }
+        }
+        .cut-in-text {
+             font-family: 'Kiwi Maru', serif;
+             font-size: clamp(2.5rem, 8vw, 5rem);
+             text-shadow: 0 0 10px #fff, 0 0 20px #fef08a;
+             position: absolute;
+             z-index: 65;
+             white-space: nowrap;
+        }
+        .control-button {
+            position: fixed;
+            z-index: 100;
+            height: 60px;
+            background-color: rgba(0,0,0,0.7);
+            border-radius: 9999px;
+            font-size: 1rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            padding: 0 1.5rem;
+            white-space: nowrap;
+        }
+        .share-button {
+            top: 1rem;
+            right: 1rem;
+            border: 2px solid #1DA1F2;
+            color: #1DA1F2;
+        }
+        .share-button:hover {
+            background-color: #1DA1F2;
+            color: #fff;
+            transform: scale(1.1);
+        }
+        .restart-button {
+            top: 1rem;
+            left: 1rem;
+            border: 2px solid #fff;
+            color: #fff;
+        }
+        .restart-button:hover {
+            background-color: #fff;
+            color: #000;
+            transform: scale(1.1);
+        }
+        .glitch-effect {
+            animation: glitch 0.3s steps(2, jump-end) infinite;
+        }
+        @keyframes glitch {
+            0% { clip-path: inset(20% 0 50% 0); transform: translate(-5px, -3px); }
+            20% { clip-path: inset(80% 0 5% 0); transform: translate(5px, 3px); }
+            40% { clip-path: inset(30% 0 30% 0); transform: translate(-3px, 5px); }
+            60% { clip-path: inset(50% 0 40% 0); transform: translate(3px, -5px); }
+            80% { clip-path: inset(10% 0 75% 0); transform: translate(-5px, 3px); }
+            100% { clip-path: inset(60% 0 20% 0); transform: translate(5px, -3px); }
+        }
+    </style>
+</head>
+<body class="center-flex">
+
+    <!-- スタート画面 -->
+    <div id="start-screen" class="text-center p-4 flex-col center-flex h-full w-full z-30">
+        <button onclick="shareOnTwitter()" class="control-button share-button">
+            <svg viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-2"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+            拡散するッ!!
+        </button>
+        <div id="start-lemon-container" class="overlay pointer-events-none"></div>
+        <div class="flex-grow center-flex flex-col w-full px-4">
+            <h2 class="text-3xl md:text-5xl font-bold mb-8 text-yellow-300 drop-shadow-[0_0_10px_#facc15]">最高のエナジードリンク！<br>キレートレモンぶち生み出しボタン！</h2>
+            <button id="start-button" class="bg-black text-white font-bold rounded-full w-48 h-48 md:w-64 md:h-64 center-flex text-xl md:text-3xl flex-shrink-0">創生開始</button>
+        </div>
+        <p id="disclaimer" class="text-xs sm:text-sm mb-4 font-bold">※このサイトはキレートレモンへの販売リンクを表示するだけのMAD UIです。<br>本アプリはジョークアプリです。イッツジョークアベニュー！<br><br></p>
+    </div>
+
+    <!-- アニメーション用コンテナ -->
+    <div id="animation-container" class="overlay hidden">
+        <canvas id="three-canvas" class="z-10"></canvas>
+        <div id="particle-container" class="overlay pointer-events-none" style="z-index: 45;"></div>
+        <div id="interactive-scene" class="overlay hidden z-60 pointer-events-none"></div>
+        <div id="text-overlay" class="text-overlay"></div>
+    </div>
+    
+    <!-- ミニゲーム用オーバーレイ -->
+    <div id="mashing-overlay" class="overlay hidden bg-black bg-opacity-70 flex-col center-flex z-40 p-4"></div>
+    <div id="fatigue-crusher-overlay" class="overlay hidden z-40 p-4"></div>
+
+    <!-- 結果画面 -->
+    <div id="result-screen" class="hidden text-center flex-col justify-around items-center p-4 z-30 h-full w-full">
+        <div class="lemon-scroll-container"></div>
+        <button onclick="shareOnTwitter()" class="control-button share-button">
+             <svg viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-2"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+             拡散するッ!!
+        </button>
+        <button onclick="window.location.reload()" class="control-button restart-button">↩️ ワンモアセッ！</button>
+        <div class="flex-grow center-flex flex-col w-full relative z-10"> <!-- コンテンツが手前に来るように -->
+            <h2 class="text-4xl md:text-7xl font-bold mb-4 rainbow-text">超絶生命体、爆誕！</h2>
+            
+            <div class="my-4 flex flex-col items-center gap-2">
+                 <img src="https://pbs.twimg.com/profile_images/1905651963158835200/M06q-esr_400x400.jpg" onerror="this.onerror=null;this.src='https://placehold.co/100x100/ffffff/000000?text=カゲキン';" alt="カゲキン博士" class="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-fuchsia-500">
+                <div class="speech-bubble p-3 md:p-4 max-w-sm md:max-w-md">
+                    <p class="text-base md:text-lg">キレートレモンは疲労に立ち向かえる素敵なドリンクなんだよ！ミーのおすすめ！</p>
+                </div>
+            </div>
+            
+            <!-- Amazon商品へのリンク -->
+            <a href="https://amzn.to/4egamGM" target="_blank" class="block my-4 p-2 bg-white rounded-lg shadow-2xl transition-transform hover:scale-105">
+                <img src="https://m.media-amazon.com/images/I/71F6VU+8dDL._AC_SL1500_.jpg" onerror="this.onerror=null;this.src='https://placehold.co/256x256/facc15/000000?text=キレートレモン・真極';" alt="キレートレモン" class="w-40 h-40 md:w-56 md:h-56 object-contain">
+            </a>
+            
+            <button id="complete-button" class="bg-gradient-to-r from-green-400 to-blue-500 text-white font-bold py-3 px-8 rounded-full text-2xl md:text-3xl shadow-lg">キレートレモン準備完了</button>
+            <p class="mt-2 text-sm">上の画像か<a href="https://amzn.to/4egamGM" target="_blank" class="text-cyan-400 underline">このリンク</a>から購入できるぞ！</p>
+        </div>
+    </div>
+
+    <footer class="fixed bottom-0 left-0 w-full text-center p-2 bg-black bg-opacity-50 z-50">
+        <p class="text-xs sm:text-sm">制作: <a href="https://x.com/kgkn42" target="_blank" class="text-fuchsia-400 hover:underline">カゲキン博士</a> With Gemini</p>
+        <p class="text-xs text-gray-400">※当サイトは、Amazonアソシエイト・プログラムの参加者です。</p>
+    </footer>
+
+    <script>
+        // --- Global Setup ---
+        const $ = (selector) => document.querySelector(selector);
+        const startButton = $('#start-button'), startScreen = $('#start-screen'), animationContainer = $('#animation-container'), resultScreen = $('#result-screen');
+        const textOverlay = $('#text-overlay'), canvas = $('#three-canvas'), mashingOverlay = $('#mashing-overlay');
+        const fatigueCrusherOverlay = $('#fatigue-crusher-overlay');
+        const interactiveSceneEl = $('#interactive-scene'), startLemonContainer = $('#start-lemon-container');
+        const particleContainer = $('#particle-container');
+        const completeButton = $('#complete-button');
+
+        let scene, camera, renderer, finalBottle;
+        const animals = ['🐒','🦍','🐈','🐕','🐅','🐎','🦌','🐘','🦏','🐪','🦒','🦘','🐃','🐄','🐖','🐏','🐐','🐓','🐧','🕊️','🦅','🦆','🦉','🐸','🐊','🐢','🐍','🐉','🐳','🐬'];
+        const labEmojis = ['🧪', '⚗️', '🧬', '⚡️', '💥', '🔬', '📡', '☢️', '☣️'];
+        
+        // --- Sound Engine ---
+        const synth = new Tone.FMSynth().toDestination();
+        const noiseSynth = new Tone.NoiseSynth({ envelope: { attack: 0.005, decay: 0.1, sustain: 0 } }).toDestination();
+        const screamSynth = new Tone.MembraneSynth({ pitchDecay: 0.05, octaves: 10, oscillator: { type: "sawtooth" }, envelope: { attack: 0.001, decay: 0.4, sustain: 0.01, release: 1.4, attackCurve: "exponential" } }).toDestination();
+        const finalSynth = new Tone.Synth({ oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.5 } }).toDestination();
+        const lockOnSynth = new Tone.Synth({oscillator: {type: 'triangle'}, envelope: {attack: 0.01, decay: 0.1, sustain: 0.05, release: 0.2}}).toDestination();
+        const squeezeSynth = new Tone.AMSynth({
+            harmonicity: 1.5,
+            envelope: { attack: 0.01, decay: 0.5, release: 0.5 },
+            modulation: { type: "sawtooth" },
+            modulationEnvelope: { attack: 0.01, decay: 0.2, release: 0.2 }
+        }).toDestination();
+        const monkeySynth = new Tone.MonoSynth({ oscillator: { type: "sawtooth" }, envelope: { attack: 0.05, decay: 0.2, sustain: 0.1, release: 0.4 }, filterEnvelope: { attack: 0.01, decay: 0.05, sustain: 0.05, release: 0.8, baseFrequency: 400, octaves: 4 } }).toDestination();
+        const pyuunSynth = new Tone.Synth({oscillator:{type:'sine'}, envelope: {attack:0.01, decay:0.3, sustain:0.1, release:0.5}}).toDestination();
+
+        const bgmLoop = new Tone.Sequence((time, note) => { synth.triggerAttackRelease(note, "8n", time); }, ["C2", ["E2", "G2"], "A#1", ["E2", "G2"]], "4n");
+        Tone.Transport.bpm.value = 140;
+
+        // --- Utility & Init Functions ---
+        const setVh = () => document.documentElement.style.setProperty('--vh', `${window.innerHeight}px`);
+        window.addEventListener('resize', setVh); setVh();
+
+        window.shareOnTwitter = function() {
+            const text = encodeURIComponent("🧠🧪最強エナジードリンク🍋\n🍋キレートレモン🍋を生成したぞ！🐱\n\n");
+            const url = encodeURIComponent(window.location.href);
+            const hashtag = "キレートレモンボタン";
+            window.open(`https://x.com/intent/tweet?text=${text}&url=${url}&hashtags=${hashtag}`, '_blank');
+        }
+        
+        function scrambleText(element, final_text, duration) {
+            let i = 0;
+            const scrambleInterval = setInterval(() => {
+                element.innerHTML = final_text.substring(0, i) + final_text.substring(i).split('').map(() => String.fromCharCode(33 + Math.random() * 94)).join('');
+                if (i >= final_text.length) {
+                    clearInterval(scrambleInterval);
+                    element.innerHTML = final_text;
+                }
+                i++;
+            }, (duration * 1000) / final_text.length);
+        }
+
+        function init3D() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+            const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+            pointLight.position.set(5, 5, 5);
+            scene.add(pointLight);
+            const bottleGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1.5, 32);
+            const bottleMaterial = new THREE.MeshToonMaterial({ color: 0xfacc15 });
+            finalBottle = new THREE.Mesh(bottleGeometry, bottleMaterial);
+            finalBottle.visible = false;
+            scene.add(finalBottle);
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+            animate3D();
+        }
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            if (finalBottle && finalBottle.visible) finalBottle.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        
+        // --- Animation & Game Functions (Full Definitions) ---
+        function spawnEmoji(options) {
+            const emoji = document.createElement('div');
+            emoji.className = 'emoji ' + (options.class || '');
+            emoji.style.fontSize = `${options.size || 2 + Math.random() * 2}rem`;
+            emoji.innerText = options.char;
+            emoji.style.zIndex = options.zIndex || 15;
+            options.container.appendChild(emoji);
+            gsap.fromTo(emoji, options.from, { ...options.to, onComplete: () => emoji.remove() });
+        }
+        
+        function runMonkeyJumpScene() {
+            return new Promise(resolve => {
+                interactiveSceneEl.classList.remove('hidden');
+                scrambleText(textOverlay, "サルをタップしてレモンを収穫だ！", 1.5);
+                
+                const tree = document.createElement('div');
+                tree.innerText = '🌳';
+                tree.className = 'emoji';
+                tree.style.cssText = 'font-size:clamp(8rem, 25vmin, 12rem);position:absolute;left:50%;bottom:20%;transform:translateX(-50%); z-index: 61;';
+                interactiveSceneEl.appendChild(tree);
+
+                const monkey = document.createElement('div');
+                monkey.innerText = '🐒';
+                monkey.className = 'emoji';
+                monkey.style.cssText = 'font-size:clamp(3rem, 10vmin, 5rem);position:absolute;left:10%;bottom:10%;cursor:pointer;pointer-events:all; z-index: 62;';
+                interactiveSceneEl.appendChild(monkey);
+                
+                const lemon = document.createElement('div');
+                lemon.innerText = '🍋';
+                lemon.className = 'emoji';
+                lemon.style.cssText = 'font-size:clamp(4rem, 12vmin, 6rem);position:absolute;right:10%;top:20%; z-index: 61;';
+                interactiveSceneEl.appendChild(lemon);
+                
+                gsap.to(monkey, {scale: 1.2, duration: 0.5, repeat: -1, yoyo: true});
+
+                monkey.onclick = () => {
+                    monkey.onclick = null;
+                    monkey.style.pointerEvents = 'none';
+                    gsap.killTweensOf(monkey);
+                    
+                    monkeySynth.triggerAttackRelease("G#4", "8n");
+                    
+                    const jumpTl = gsap.timeline({
+                        onStart: () => {
+                            pyuunSynth.frequency.setValueAtTime("C6", Tone.now());
+                            pyuunSynth.frequency.exponentialRampToValueAtTime("C4", Tone.now() + 1.0);
+                            pyuunSynth.triggerAttack(Tone.now());
+                            pyuunSynth.triggerRelease(Tone.now() + 1.0);
+                        },
+                        onComplete: () => {
+                            gsap.to(interactiveSceneEl, {opacity: 0, duration: 0.5, onComplete: () => {
+                                interactiveSceneEl.innerHTML = '';
+                                interactiveSceneEl.classList.add('hidden');
+                                interactiveSceneEl.style.opacity = 1;
+                                resolve();
+                            }});
+                        }
+                    });
+                    jumpTl.to(monkey, {
+                        x: lemon.getBoundingClientRect().left - monkey.getBoundingClientRect().left,
+                        y: lemon.getBoundingClientRect().top - monkey.getBoundingClientRect().top,
+                        rotation: 360, 
+                        duration: 1, 
+                        ease: 'power1.inOut'
+                    });
+                    jumpTl.to(lemon, {scale: 0, duration: 0.5}, "<0.8");
+                    jumpTl.to(monkey, {y: window.innerHeight, duration: 1, ease: 'power2.in'}, ">-0.5");
+                };
+            });
+        }
+        
+        function runCatShuffleScene() {
+             return new Promise(resolve => {
+                interactiveSceneEl.classList.remove('hidden');
+                scrambleText(textOverlay, "🧪ミーがまぜまぜしてやるのだ🧪", 2.0);
+                
+                const bgImage = document.createElement('img');
+                bgImage.src = 'https://lemon.kagekin.com/img/hakaseshibori.png';
+                bgImage.className = 'absolute top-0 left-0 w-full h-full object-cover z-61';
+                bgImage.style.filter = 'brightness(0.7)';
+                interactiveSceneEl.appendChild(bgImage);
+
+                const cat = document.createElement('div');
+                cat.innerText = '🐱';
+                cat.className = 'emoji';
+                cat.style.cssText = 'font-size:clamp(5rem, 15vmin, 8rem); z-index: 63;';
+                interactiveSceneEl.appendChild(cat);
+                
+                const leftTestTube = document.createElement('div');
+                leftTestTube.innerText = '🧪';
+                leftTestTube.className = 'emoji';
+                leftTestTube.style.cssText = 'font-size:clamp(4rem, 12vmin, 7rem); z-index: 62;';
+                interactiveSceneEl.appendChild(leftTestTube);
+
+                const rightTestTube = document.createElement('div');
+                rightTestTube.innerText = '🧪';
+                rightTestTube.className = 'emoji';
+                rightTestTube.style.cssText = 'font-size:clamp(4rem, 12vmin, 7rem); z-index: 62;';
+                interactiveSceneEl.appendChild(rightTestTube);
+                
+                const tl = gsap.timeline({
+                    onStart: () => noiseSynth.triggerAttackRelease("8n"),
+                    onComplete: () => {
+                        gsap.to(interactiveSceneEl, {opacity: 0, duration: 0.5, onComplete: () => {
+                            interactiveSceneEl.innerHTML = '';
+                            interactiveSceneEl.classList.add('hidden');
+                            interactiveSceneEl.style.opacity = 1;
+                            resolve();
+                        }});
+                    }
+                });
+
+                tl.set([bgImage, cat, leftTestTube, rightTestTube], { x: '50vw', y: '50vh', xPercent: -50, yPercent: -50 });
+                tl.from([bgImage, cat, leftTestTube, rightTestTube], {scale: 0, duration: 0.5, ease: 'back.out'});
+                tl.to(bgImage, { scale: 1.1, rotation: 3, duration: 0.25, repeat: 9, yoyo: true, ease: 'sine.inOut'}, ">-0.2");
+                tl.to(bgImage, { className: '+=glitch-effect', duration: 2.5, ease: 'steps(1)'}, 0.5);
+                tl.to(leftTestTube, {x: '+= -10vw', duration: 0.5, ease: 'power1.out'}, "<");
+                tl.to(rightTestTube, {x: '+= 10vw', duration: 0.5, ease: 'power1.out'}, "<");
+                tl.to([leftTestTube, rightTestTube], {
+                    rotation: 'random(-60, 60)',
+                    duration: 0.25,
+                    repeat: 9,
+                    yoyo: true,
+                    ease: 'sine.inOut',
+                    onRepeat: () => noiseSynth.triggerAttackRelease("16n")
+                }, ">-0.2");
+                tl.to([bgImage, cat, leftTestTube, rightTestTube], {scale: 0, rotation: 360, duration: 0.5, ease: 'back.in', stagger: 0.1}, ">");
+            });
+        }
+
+        function runLockOnScene() {
+            return new Promise(resolve => {
+                interactiveSceneEl.classList.remove('hidden');
+                
+                const text1 = document.createElement('div');
+                text1.className = 'cut-in-text text-yellow-300';
+                text1.innerText = '🍋🍋レモンエナジー！🍋🍋';
+                text1.style.top = '30%';
+                interactiveSceneEl.appendChild(text1);
+
+                const text2 = document.createElement('div');
+                text2.className = 'cut-in-text text-cyan-400';
+                text2.innerText = '🍋🍋🍋ロックオン🔏🍋🍋';
+                text2.style.top = '60%';
+                interactiveSceneEl.appendChild(text2);
+                
+                const tl = gsap.timeline({
+                    onStart: () => {
+                        lockOnSynth.triggerAttackRelease("G5", "0.1");
+                        lockOnSynth.frequency.rampTo("C6", 0.1);
+                    },
+                    onComplete: () => {
+                        gsap.to(interactiveSceneEl, {opacity: 0, duration: 0.5, onComplete: () => {
+                            interactiveSceneEl.innerHTML = '';
+                            interactiveSceneEl.classList.add('hidden');
+                            interactiveSceneEl.style.opacity = 1;
+                            resolve();
+                        }});
+                    }
+                });
+
+                tl.from(text1, { x: '100vw', duration: 0.5, ease: 'power2.out' });
+                tl.from(text2, { x: '-100vw', duration: 0.5, ease: 'power2.out' }, '<');
+                tl.to([text1, text2], {
+                    x: (i) => i === 0 ? '-100vw' : '100vw',
+                    duration: 0.5,
+                    ease: 'power2.in',
+                    delay: 1.5
+                });
+            });
+        }
+        
+        function runBrainSqueezeScene() {
+            return new Promise(async resolve => {
+                interactiveSceneEl.classList.remove('hidden');
+                
+                const brains = [
+                    { name: 'アインシュタイン', url: 'https://lemon.kagekin.com/img/brain-einstein.png' },
+                    { name: 'ニュートン', url: 'https://lemon.kagekin.com/img/brain-newton.png' },
+                    { name: 'ダ・ヴィンチ', url: 'https://lemon.kagekin.com/img/brain-davinci.png' },
+                ];
+
+                for (const brainInfo of brains) {
+                    await new Promise(nextBrain => {
+                         const geniusImg = document.createElement('img');
+                         geniusImg.src = brainInfo.url;
+                         geniusImg.onerror = () => geniusImg.src = `https://placehold.co/200x200/ffffff/000000?text=${brainInfo.name}`;
+                         geniusImg.style.cssText = 'position:absolute; width:clamp(150px, 40vw, 250px); height:auto; left:50%; top:40%; transform:translate(-50%, -50%); z-index:62;';
+                         interactiveSceneEl.appendChild(geniusImg);
+                         
+                         const brainEmoji = document.createElement('div');
+                         brainEmoji.innerText = '🧠';
+                         brainEmoji.className = 'emoji';
+                         brainEmoji.style.cssText = 'font-size:clamp(4rem, 15vmin, 8rem); z-index:63; position: absolute;';
+                         interactiveSceneEl.appendChild(brainEmoji);
+
+                         const lemonEmoji = document.createElement('div');
+                         lemonEmoji.innerText = '🍋';
+                         lemonEmoji.className = 'emoji';
+                         lemonEmoji.style.cssText = 'font-size:clamp(4rem, 15vmin, 8rem); z-index:63; position: absolute;';
+                         interactiveSceneEl.appendChild(lemonEmoji);
+
+                         const tl = gsap.timeline({
+                             onStart: () => scrambleText(textOverlay, `${brainInfo.name}の脳髄を抽出！`, 1),
+                             onComplete: () => {
+                                 geniusImg.remove();
+                                 nextBrain();
+                             }
+                         });
+                         
+                         tl.from(geniusImg, { scale: 0, duration: 1, ease: 'back.out' });
+                         tl.set(brainEmoji, { 
+                            x: '50vw', 
+                            y: geniusImg.getBoundingClientRect().top,
+                            xPercent: -50,
+                            yPercent: -100, // Emerge from top of image
+                         },"<");
+                         tl.to(brainEmoji, { y: '-=150px', duration: 0.5, ease: 'power1.out' }, ">");
+                         
+                         const brainRect = brainEmoji.getBoundingClientRect();
+                         tl.from(lemonEmoji, { x: window.innerWidth, y: () => brainEmoji.getBoundingClientRect().top, duration: 0.6, ease: 'power2.in'}, '>-0.2');
+                         tl.call(() => {
+                            squeezeSynth.triggerAttackRelease("C2", "0.5");
+                            const collision = document.createElement('div');
+                            collision.innerText = '💥';
+                            collision.className = 'emoji';
+                            collision.style.cssText = 'font-size: 8rem; z-index: 64; position:absolute;';
+                            interactiveSceneEl.appendChild(collision);
+                            const finalBrainRect = brainEmoji.getBoundingClientRect();
+                            gsap.set(collision, { x: finalBrainRect.left, y: finalBrainRect.top });
+                            gsap.fromTo(collision, {scale: 0, opacity: 1}, {scale: 3, opacity: 0, duration: 0.5, onComplete: ()=> collision.remove()});
+                         });
+                         tl.to([brainEmoji, lemonEmoji], { scale: 0, duration: 0.2 }, "<");
+                         tl.to(geniusImg, { scale: 0, rotation: 360, duration: 1, ease: 'power4.in', delay: 0.5 });
+                    });
+                }
+                
+                gsap.to(interactiveSceneEl, {opacity: 0, duration: 0.5, onComplete: () => {
+                    interactiveSceneEl.innerHTML = '';
+                    interactiveSceneEl.classList.add('hidden');
+                    interactiveSceneEl.style.opacity = 1;
+                    resolve();
+                }});
+            });
+        }
+
+        function runMashingGame() {
+            return new Promise(resolve => {
+                mashingOverlay.innerHTML='<h3 class="text-4xl md:text-5xl text-red-500 mb-8 font-bold animate-pulse text-center">クエン酸をこめろ！！</h3><button id="mash-button-inner" class="w-48 h-48 md:w-64 md:h-64 rounded-full bg-yellow-400 text-black text-3xl md:text-4xl font-bold center-flex active:scale-95 transition-transform">連打！</button><div id="mash-timer-inner" class="text-3xl md:text-4xl mt-8"></div>';
+                mashingOverlay.classList.remove('hidden');
+                gsap.from(mashingOverlay,{opacity:0,duration:.5});
+                let c=0,t=5;
+                const mB=$('#mash-button-inner'),mT=$('#mash-timer-inner');
+                mT.textContent=t;
+                function h(){
+                    c++;
+                    noiseSynth.triggerAttack();
+                    gsap.to(mB,{scale:1.1,duration:.05,yoyo:true,repeat:1});
+                    document.body.classList.add('glitch-effect');
+                    setTimeout(() => document.body.classList.remove('glitch-effect'), 100);
+                }
+                mB.addEventListener('click',h);
+                const i=setInterval(()=>{t--;mT.textContent=t;if(t<=0){clearInterval(i);mB.removeEventListener('click',h);gsap.to(mashingOverlay,{opacity:0,duration:.5,onComplete:()=>{mashingOverlay.classList.add('hidden');mashingOverlay.innerHTML='';resolve(c)}})}},1000)
+            });
+        }
+        
+        function runFatigueCrusherGame() {
+            return new Promise(resolve => {
+                fatigueCrusherOverlay.innerHTML='<h3 class="absolute top-10 left-1/2 -translate-x-1/2 text-3xl md:text-5xl text-cyan-400 font-bold animate-pulse text-center">疲労を破壊しろ！</h3><div id="fatigue-counter-inner" class="absolute bottom-10 left-1/2 -translate-x-1/2 text-2xl md:text-4xl">破壊数: 0</div>';
+                fatigueCrusherOverlay.classList.remove('hidden');
+                gsap.from(fatigueCrusherOverlay,{opacity:0,duration:.5});
+                let c=0;
+                const fC=$('#fatigue-counter-inner');
+                fC.textContent=`破壊数: ${c}`;
+                function o(){
+                    const b=document.createElement('div');
+                    b.className='w-24 h-24 bg-purple-600 rounded-full center-flex text-xl font-bold cursor-pointer absolute';
+                    b.innerText='疲労';
+                    b.style.left=`${10+Math.random()*80}%`;
+                    b.style.top=`${15+Math.random()*70}%`;
+                    b.style.animation='float 3s ease-in-out infinite';
+                    b.style.pointerEvents = 'all';
+                    fatigueCrusherOverlay.appendChild(b);
+                    b.addEventListener('click',()=>{
+                        c++;
+                        fC.textContent=`破壊数: ${c}`;
+                        screamSynth.triggerAttackRelease("A3","8n");
+                        document.body.classList.add('glitch-effect');
+                        setTimeout(() => document.body.classList.remove('glitch-effect'), 100);
+                        const s=document.createElement('div');
+                        s.className='absolute text-red-500 text-2xl pointer-events-none';
+                        s.innerText='ニギャー！';
+                        s.style.left=b.style.left;
+                        s.style.top=b.style.top;
+                        fatigueCrusherOverlay.appendChild(s);
+                        gsap.to(s,{y:-50,opacity:0,duration:1,onComplete:()=>s.remove()});
+                        gsap.to(b,{scale:0,rotation:720,duration:.5,ease:'power4.in',onComplete:()=>b.remove()});
+                    },{once:true});
+                }
+                const s=setInterval(o,800);
+                setTimeout(()=>{
+                    clearInterval(s);
+                    gsap.to(fatigueCrusherOverlay,{opacity:0,duration:1,onComplete:()=>{
+                        fatigueCrusherOverlay.innerHTML='';
+                        fatigueCrusherOverlay.classList.add('hidden');
+                        resolve(c);
+                    }});
+                },10000);
+            });
+        }
+        
+        function initStartScreenLemons() {
+            for(let i=0;i<15;i++){
+                const l=document.createElement('div');
+                l.innerText='🍋';
+                l.className='emoji pointer-events-none';
+                l.style.fontSize=`${1+Math.random()*2}rem`;
+                l.style.opacity=`${0.1+Math.random()*.5}`;
+                startLemonContainer.appendChild(l);
+                gsap.to(l,{
+                    x:`random(-50,50,true)`,
+                    y:`random(-50,50,true)`,
+                    scale:`random(0.8,1.2)`,
+                    rotation:`random(-360,360)`,
+                    duration:`random(2,4)`,
+                    repeat:-1,
+                    yoyo:true,
+                    ease:"sine.inOut"
+                });
+                gsap.set(l,{x:`${Math.random()*window.innerWidth}px`,y:`${Math.random()*window.innerHeight}px`});
+            }
+        }
+        
+        function initResultScreenLemons() {
+            const container = resultScreen.querySelector('.lemon-scroll-container');
+            container.innerHTML = '';
+            const makeTrack = (y, reverse = false) => {
+                const track = document.createElement('div');
+                track.className = 'lemon-track';
+                track.style.top = y;
+                if(reverse) track.style.animationDirection = 'reverse';
+                track.innerHTML = ('🍋'.repeat(50));
+                container.appendChild(track);
+            };
+            makeTrack('5%');
+            makeTrack('15%', true);
+            makeTrack('80%');
+            makeTrack('90%', true);
+        }
+
+        // --- MAIN SEQUENCE ---
+        async function startTheMadness() {
+            await Tone.start();
+            init3D();
+            
+            animationContainer.classList.remove('hidden');
+            gsap.to(startScreen, { opacity: 0, duration: 0.5, onComplete: () => startScreen.classList.add('hidden') });
+
+            await new Promise(res => gsap.to(textOverlay, { opacity: 1, duration: 0.1, onComplete: res}));
+            
+            await runMonkeyJumpScene();
+            await runCatShuffleScene();
+            await runLockOnScene();
+            await runBrainSqueezeScene();
+            
+            scrambleText(textOverlay, "カオス粒子、無限注入！", 2);
+            bgmLoop.start(0); Tone.Transport.start();
+            const intervals = [
+                setInterval(() => spawnEmoji({ char: '🍋', class:'rainbow-text', container: particleContainer, zIndex: 45, from: {x: Math.random() * window.innerWidth, y: -100, rotation: 0}, to: {x: Math.random() * window.innerWidth, y: window.innerHeight + 100, rotation: 720, duration: 3, ease: "none"} }), 150),
+                setInterval(() => spawnEmoji({ char: animals[Math.floor(Math.random() * animals.length)], container: particleContainer, zIndex: 45, from: {x: -100, y: Math.random() * window.innerHeight }, to: {x: window.innerWidth + 100, duration: 6, ease: "linear"} }), 400),
+                setInterval(() => spawnEmoji({ char: labEmojis[Math.floor(Math.random() * labEmojis.length)], size: 1 + Math.random() * 3, container: particleContainer, zIndex: 45, from: {scale: 0, x: window.innerWidth/2, y: window.innerHeight/2}, to: {scale: 1, opacity: 0, x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight, duration: 2, ease: 'expo.out'} }), 250)
+            ];
+            await new Promise(res => setTimeout(() => { intervals.forEach(clearInterval); res(); }, 6000));
+            
+            await runMashingGame();
+            await runFatigueCrusherGame();
+
+            scrambleText(textOverlay, "最終工程…魂の融合ッ！！", 2);
+            Tone.Transport.stop(); bgmLoop.stop();
+            const endingSynth = new Tone.FMSynth().toDestination();
+            endingSynth.triggerAttack("C1");
+            gsap.to(endingSynth.frequency, {value: 2000, duration: 4, ease: 'power2.in', onComplete: () => {
+                endingSynth.triggerRelease();
+            }});
+            await new Promise(res => setTimeout(res, 4100));
+            
+            gsap.to(animationContainer, { backgroundColor: "#FFFFFF", duration: 0.1 });
+            await new Promise(res => setTimeout(res, 100));
+            gsap.to(animationContainer, { backgroundColor: "#000000", duration: 0.1 });
+            await new Promise(res => setTimeout(res, 100));
+            
+            gsap.to(animationContainer, { opacity: 0, duration: 1, onComplete: () => animationContainer.classList.add('hidden')});
+            
+            resultScreen.classList.remove('hidden');
+            initResultScreenLemons();
+            finalBottle.visible = true;
+            const successSynth = new Tone.PolySynth(Tone.Synth).toDestination();
+            successSynth.triggerAttackRelease(["C4", "E4", "G4", "C5"], 2);
+            
+            gsap.from(resultScreen, { opacity: 0, scale: 0.5, duration: 1.5, ease: 'elastic.out(1, 0.5)' });
+            gsap.fromTo(finalBottle.position, { y: 10 }, { y: 0, duration: 2, ease: 'bounce.out'}, "<");
+        }
+        
+        // --- Bootstrapping ---
+        initStartScreenLemons();
+        startButton.addEventListener('click', startTheMadness, {once: true});
+        completeButton.addEventListener('click', () => {
+            finalSynth.triggerAttackRelease("C5", "0.2");
+            finalSynth.frequency.rampTo("C6", 0.1);
+            setTimeout(() => {
+                window.open('https://amzn.to/4egamGM', '_blank');
+            }, 200);
+        });
+    </script>
+</body>
+</html>
